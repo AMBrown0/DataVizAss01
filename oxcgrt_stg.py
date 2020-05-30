@@ -65,41 +65,42 @@ data = urllib.request.urlopen(url).read()
 
 # load the data (will be saved as dictionary in output)
 output = json.loads(data)
+
 #print(output)
 
 #Read in the data portion of the json information 
 
-data_dict=output["data"]
-data_df=pd.DataFrame(data_dict)
-data_frame_sorted=data_df.sort_index(axis=0)
+# data_dict=output["data"]
+# data_df=pd.DataFrame(data_dict)
+# data_frame_sorted=data_df.sort_index(axis=0)
 
 
-writer = pd.ExcelWriter(filename, engine='xlsxwriter')
+# writer = pd.ExcelWriter(filename, engine='xlsxwriter')
 
-confirmedcases_df=get_subset_by_key(data_frame_sorted,'confirmed')
-#Liner interolate missing values and fill in remaining NaN with Zero
-confirmedcases_df=confirmedcases_df.interpolate(method='linear', limit_direction='forward', axis=1)
-confirmedcases_df.columns=pd.to_datetime(confirmedcases_df.columns).strftime("%d%b%Y")
-confirmedcases_df=confirmedcases_df.fillna(0)
-confirmedcases_df.to_excel(writer, sheet_name='confirmedcases')
-
-
-confirmeddeaths_df=get_subset_by_key(data_frame_sorted,'deaths')
-confirmeddeaths_df=confirmeddeaths_df.interpolate(method='linear', limit_direction='forward', axis=1)
-confirmeddeaths_df=confirmeddeaths_df.fillna(0)
-confirmeddeaths_df.columns=pd.to_datetime(confirmeddeaths_df.columns).strftime("%d%b%Y")
-confirmeddeaths_df.to_excel(writer, sheet_name='confirmeddeaths')
+# confirmedcases_df=get_subset_by_key(data_frame_sorted,'confirmed')
+# #Liner interolate missing values and fill in remaining NaN with Zero
+# confirmedcases_df=confirmedcases_df.interpolate(method='linear', limit_direction='forward', axis=1)
+# confirmedcases_df.columns=pd.to_datetime(confirmedcases_df.columns).strftime("%d%b%Y")
+# confirmedcases_df=confirmedcases_df.fillna(0)
+# confirmedcases_df.to_excel(writer, sheet_name='confirmedcases')
 
 
+# confirmeddeaths_df=get_subset_by_key(data_frame_sorted,'deaths')
+# confirmeddeaths_df=confirmeddeaths_df.interpolate(method='linear', limit_direction='forward', axis=1)
+# confirmeddeaths_df=confirmeddeaths_df.fillna(0)
+# confirmeddeaths_df.columns=pd.to_datetime(confirmeddeaths_df.columns).strftime("%d%b%Y")
+# confirmeddeaths_df.to_excel(writer, sheet_name='confirmeddeaths')
 
-stringencyindex_legacy_df=get_subset_by_key(data_frame_sorted,'stringency_legacy')
-#stringencyindex_legacy_df=stringencyindex_legacy_df.interpolate(method='linear', limit_direction='forward', axis=1)
-#backup=stringencyindex_legacy_df
-#stringencyindex_legacy_df=stringencyindex_legacy_df.fillna(0)
-stringencyindex_legacy_df.columns=pd.to_datetime(stringencyindex_legacy_df.columns).strftime("%d%b%Y")
-stringencyindex_legacy_df.to_excel(writer, sheet_name='stringency_legacy')
 
-writer.save()
+
+# stringencyindex_legacy_df=get_subset_by_key(data_frame_sorted,'stringency_legacy')
+# #stringencyindex_legacy_df=stringencyindex_legacy_df.interpolate(method='linear', limit_direction='forward', axis=1)
+# #backup=stringencyindex_legacy_df
+# #stringencyindex_legacy_df=stringencyindex_legacy_df.fillna(0)
+# stringencyindex_legacy_df.columns=pd.to_datetime(stringencyindex_legacy_df.columns).strftime("%d%b%Y")
+# stringencyindex_legacy_df.to_excel(writer, sheet_name='stringency_legacy')
+
+# writer.save()
 
         
 
