@@ -97,7 +97,7 @@ stringencyindex_legacy_df=get_subset_by_key(data_frame_sorted,'stringency_legacy
 #backup=stringencyindex_legacy_df
 #stringencyindex_legacy_df=stringencyindex_legacy_df.fillna(0)
 stringencyindex_legacy_df.columns=pd.to_datetime(stringencyindex_legacy_df.columns).strftime("%d%b%Y")
-stringencyindex_legacy_df.to_excel(writer, sheet_name='stringency_legacy')
+stringencyindex_legacy_df.to_excel(writer, sheet_name='stringencyindex_legacy')
 
 writer.save()
 
