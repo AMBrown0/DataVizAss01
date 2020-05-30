@@ -19,6 +19,7 @@ from numpy import median, mean
 import json, urllib.request
 import sys
 from pathlib import Path
+from datetime import datetime
 
 def get_data_from_cell(cell,key):
 
@@ -73,19 +74,32 @@ data_frame_sorted=data_df.sort_index(axis=0)
 writer = pd.ExcelWriter(filename, engine='xlsxwriter')
 
 confirmedcases_df=get_subset_by_key(data_frame_sorted,'confirmed')
-confirmedcases_df=confirmedcases_df.interpolate(method='linear', limit_direction='forward', axis=0)
+#Liner interolate missing values and fill in remaining NaN with Zero
+confirmedcases_df=confirmedcases_df.interpolate(method='linear', limit_direction='forward', axis=1)
+confirmedcases_df.columns=pd.to_datetime(confirmedcases_df.columns).strftime("%d%b%Y")
+confirmedcases_df=confirmedcases_df.fillna(0)
 confirmedcases_df.to_excel(writer, sheet_name='confirmedcases')
 
 
 confirmeddeaths_df=get_subset_by_key(data_frame_sorted,'deaths')
-confirmeddeaths_df.to_excel(writer, sheet_name='deaths')
+confirmeddeaths_df=confirmeddeaths_df.interpolate(method='linear', limit_direction='forward', axis=1)
+confirmeddeaths_df=confirmeddeaths_df.fillna(0)
+confirmeddeaths_df.columns=pd.to_datetime(confirmeddeaths_df.columns).strftime("%d%b%Y")
+confirmeddeaths_df.to_excel(writer, sheet_name='confirmeddeaths')
 
 
 
 stringencyindex_legacy_df=get_subset_by_key(data_frame_sorted,'stringency_legacy')
+stringencyindex_legacy_df=stringencyindex_legacy_df.interpolate(method='linear', limit_direction='forward', axis=1)
+stringencyindex_legacy_df=stringencyindex_legacy_df.fillna(0)
+stringencyindex_legacy_df.columns=pd.to_datetime(stringencyindex_legacy_df.columns).strftime("%d%b%Y")
 stringencyindex_legacy_df.to_excel(writer, sheet_name='stringency_legacy')
 
 writer.save()
+
+dateKeys = data_dict.keys()
+for i in dateKeys:
+    print(i)
         
 
 #for contry, new_df in confirmedcases_df.groupby(level=0):
