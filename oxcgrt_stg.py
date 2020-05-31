@@ -20,13 +20,22 @@ from datetime import datetime
 # # load the data (will be saved as dictionary in output)
 # output = json.loads(data)
 
+
+#==============================Part 1 - Question 1b =================================
 dataFolder=Path(r'.')
 filename="OxCGRT_summary.xlsx"
 dataFile= dataFolder / filename
 sheetname='stringencyindex_legacy'
 data_df = pd.read_excel (dataFile,sheet_name=sheetname)
-null_rows=data_df[data_df.isnull().any(axis=1)]
+#null_rows=data_df[data_df.isnull().any(axis=1)]
+# Fill stringency data with teh last known values 
 data_filled_df=data_df.ffill(axis=1)
+
+
+
+#==============================Part 2 - Question 1 =================================
+country_list=['China','South Korea','United States','France','United Kingdom','Italy']
+data_selected_countries_df=data_filled_df[data_filled_df['CountryName'].isin(country_list)]
 
 # xl = pd.ExcelFile(dataFile)
 # xl.sheet_names  # see all sheet names
