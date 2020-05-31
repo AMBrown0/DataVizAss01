@@ -25,20 +25,60 @@ from datetime import datetime
 dataFolder=Path(r'.')
 filename="OxCGRT_summary.xlsx"
 dataFile= dataFolder / filename
-sheetname='stringencyindex_legacy'
-data_df = pd.read_excel (dataFile,sheet_name=sheetname)
+#sheetname='stringencyindex_legacy'
+stringencyindex_legacy_df = pd.read_excel (dataFile,sheet_name='stringencyindex_legacy')
+confirmedcases_df = pd.read_excel (dataFile,sheet_name='confirmedcases')
 #null_rows=data_df[data_df.isnull().any(axis=1)]
 # Fill stringency data with teh last known values 
-data_filled_df=data_df.ffill(axis=1)
+stringencyindex_legacy_df=stringencyindex_legacy_df.ffill(axis=1)
 
 
 
 #==============================Part 2 - Question 1 =================================
-country_list=['China','South Korea','United States','France','United Kingdom','Italy']
-data_selected_countries_df=data_filled_df[data_filled_df['CountryName'].isin(country_list)]
 
-# xl = pd.ExcelFile(dataFile)
-# xl.sheet_names  # see all sheet names
+country_list=['China','South Korea','United States','France','United Kingdom','Italy']
+stringencyindex_legacy_df=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'].isin(country_list)]
+confirmedcases_df=confirmedcases_df[confirmedcases_df['CountryName'].isin(country_list)]
+
+s_t_df=stringencyindex_legacy_df.transpose()
+c_t_df=confirmedcases_df.transpose()
+X=c_t_f_df=c_t_df.iloc[2:,0:1]
+Y=s_t_df.iloc[2:,0:1]
+
+ 
+
+# X=confirmedcases_df[confirmedcases_df['CountryName'] == 'China']
+# country=X.iloc[:,0].iloc[0]
+# print("Country=%s" % country)
+# #Remove the country name and code columns
+# #X=X.iloc[:,2:]
+# X=X.iloc[:,-5:]
+
+
+# Y=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'] == 'China']
+# #Y=Y.iloc[:,2:]
+# Y=Y.iloc[:,-5:]
+
+plt.title('Comparison of stringency of COVID-19 repsonse in six countries') 
+#X=[3,5,6]
+#Y=[1,2,3]
+plt.plot(X, Y, label='China')
+#plt.scatter(X, Y, label='China')
+#plt.legend()
+plt.show()
+
+#X=confirmedcases_df=confirmedcases_df.iloc[1,:]
+
+
+# plt.plot(r1, sports_M, color='blue', width=barWidth, edgecolor='white', label='Male')
+# plt.bar(r2, sports_F, color='red', width=barWidth, edgecolor='white', label='Female')
+
+# plt.title('# of females against males winners for the Winter games from 1972 to 2014') 
+# plt.xlabel('Year', fontweight='bold')
+# plt.xticks([r + barWidth/2 for r in range(len(sports_M))], sports_M.index,rotation=90, fontsize=8)
+
+# # xl = pd.ExcelFile(dataFile)
+# # xl.sheet_names  # see all sheet names
 
 
 
