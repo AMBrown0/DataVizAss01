@@ -36,19 +36,25 @@ stringencyindex_legacy_df=stringencyindex_legacy_df.ffill(axis=1)
 
 #==============================Part 2 - Question 1 =================================
 
-country_list=['China','South Korea','United States','France','United Kingdom','Italy']
+#country_list=['China','South Korea','United States','France','United Kingdom','Italy']
+#country_list=['United Kingdom']
+country_list=['Italy']
 stringencyindex_legacy_df=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'].isin(country_list)]
 confirmedcases_df=confirmedcases_df[confirmedcases_df['CountryName'].isin(country_list)]
+country=confirmedcases_df.iloc[:,0].iloc[0]
 
 s_t_df=stringencyindex_legacy_df.transpose()
 c_t_df=confirmedcases_df.transpose()
-X=c_t_f_df=c_t_df.iloc[2:,0:1]
-Y=s_t_df.iloc[2:,0:1]
-
- 
-
+X=c_t_f_df=c_t_df.iloc[2:,:]
+X.set_axis(['confirmedcases'],axis=1,inplace=True)
+Y=s_t_df.iloc[2:,:]
+Y.set_axis(['stringency'],axis=1,inplace=True)
+Y.rename(index={0:"stringency"})
+result=pd.concat([X,Y], axis=1)
+result.set_index("confirmedcases",inplace=True) 
+result.sort_index(inplace=True)
 # X=confirmedcases_df[confirmedcases_df['CountryName'] == 'China']
-# country=X.iloc[:,0].iloc[0]
+
 # print("Country=%s" % country)
 # #Remove the country name and code columns
 # #X=X.iloc[:,2:]
@@ -62,9 +68,12 @@ Y=s_t_df.iloc[2:,0:1]
 plt.title('Comparison of stringency of COVID-19 repsonse in six countries') 
 #X=[3,5,6]
 #Y=[1,2,3]
-plt.plot(X, Y, label='China')
+plt.plot(result,label=country)
+plt.xscale("log")
+plt.ylim(0, 100)
+plt.xlim(1, 1000000)
 #plt.scatter(X, Y, label='China')
-#plt.legend()
+plt.legend()
 plt.show()
 
 #X=confirmedcases_df=confirmedcases_df.iloc[1,:]
