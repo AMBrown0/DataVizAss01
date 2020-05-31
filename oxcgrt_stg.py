@@ -63,7 +63,7 @@ for country in country_list:
     plt.ylim(0, 100)
     plt.xlim(1, 1000000)
 
-
+ 
 plt.legend()
 plt.show()
 
