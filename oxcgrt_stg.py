@@ -40,6 +40,7 @@ country_list=['China','South Korea','United States','France','United Kingdom','I
 #country_list=['United Kingdom']
 #country_list=['South Korea']
 
+
 for country in country_list:
     stringencyindex_legacy_c_df=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'] == country]
     confirmedcases_c_df=confirmedcases_df[confirmedcases_df['CountryName'] == country]
@@ -63,148 +64,43 @@ for country in country_list:
     plt.ylim(0, 100)
     plt.xlim(1, 1000000)
 
- 
+
 plt.legend()
 plt.show()
 
-#X=confirmedcases_df=confirmedcases_df.iloc[1,:]
+#Convert index to date  time for grouping
 
 
-# plt.plot(r1, sports_M, color='blue', width=barWidth, edgecolor='white', label='Male')
-# plt.bar(r2, sports_F, color='red', width=barWidth, edgecolor='white', label='Female')
-
-# plt.title('# of females against males winners for the Winter games from 1972 to 2014') 
-# plt.xlabel('Year', fontweight='bold')
-# plt.xticks([r + barWidth/2 for r in range(len(sports_M))], sports_M.index,rotation=90, fontsize=8)
-
-# # xl = pd.ExcelFile(dataFile)
-# # xl.sheet_names  # see all sheet names
+#tart_date='2020-03-02'
+#tart_date='2020-05-10'
 
 
 
-# # show all columns in the console
-# pd.set_option('display.max_columns', None)
+X=confirmedcases_df.transpose()
+country_list=confirmedcases_df['CountryName']
 
-# # download file 'athlete_events.csv' from Moodle on Kaggle 
-# # read the dataset as a pandas DataFrame
-# olympics = pd.read_csv('./data/athlete_events.csv')
+X=X.iloc[2:,]
+#X=X.diff(axis=1)
+X.index = pd.to_datetime(X.index)
 
-# #1)
-    
-# olympics_win = olympics.dropna(subset=['Medal'])
+#Calcaulte the increase from the previous day
+X=X.diff(axis=0)
+avg_df=X.loc['2020-03-02':'2020-05-10']
+gr = avg_df.groupby(pd.Grouper(level=0,freq='W'))
+gr_mean =pd.DataFrame([ g.mean() for i,g in gr ])
 
-# win_UK =olympics_win.query('NOC=="GBR"').Year.value_counts().sort_index()
+#Create a list of the countries with largest values
+largest_ten=gr_mean.max().nlargest(10)
+largest_ten_country_list=country_list[largest_ten.index]
 
-# plt.plot(win_UK.index, win_UK.values, marker='o', markerfacecolor='darkgreen')
+#Generate the data to plot
+values_of_largest_ten=gr_mean[largest_ten_country_list.index]
+values_of_largest_ten=values_of_largest_ten.transpose()
+values_of_largest_ten.index=largest_ten_country_list
+column_names=(pd.date_range(start='2020-03-02', periods=10, freq='W-MON')).date
+values_of_largest_ten.columns=column_names
+values_of_largest_ten.index.name="Country Name"
+ax = plt.axes()
+ax.set_title('Average new weekly confirmed cases ')
+sns.heatmap(values_of_largest_ten)
 
-# plt.title("number of medals won by the UK team between 1896 and 2016")
-# plt.xlabel('Year'); plt.ylabel('number of medals');
-
-# # if you want to add  y values as labels to the points
-# for x,y in zip(win_UK.index,win_UK.values):
-#     lab = "{}".format(y)
-#     plt.annotate(lab, (x,y),xytext=(x+2,y+10))
-    
-
-# # 2)
-# #a)
-
-# win_UK_medals=olympics_win.query('NOC=="GBR"').groupby(['Medal','Year'])['Medal'].count().rename("counts").reset_index()
-
-# win_UK_medals.sort_values('Year',inplace=True)
-
-
-# plt.plot(win_UK_medals.query('Medal=="Gold"').Year, win_UK_medals.query('Medal=="Gold"').counts, marker='o', markerfacecolor='Gold', color='Gold', linewidth=2, label="Gold")
-
-# plt.plot(win_UK_medals.query('Medal=="Silver"').Year, win_UK_medals.query('Medal=="Silver"').counts, marker='*', markerfacecolor='Grey', color='Grey', linewidth=2, label="Silver")
-
-# plt.plot(win_UK_medals.query('Medal=="Bronze"').Year, win_UK_medals.query('Medal=="Bronze"').counts, marker='D', markerfacecolor='black', color='black', linewidth=2, label="Bronze")
-
-# plt.title("number of medals (Gold,Silver,Bronze) won by the UK team between 1896 and 2016")
-# plt.xlabel('Year'); plt.ylabel('number of medals');
-# plt.legend()
-
-
-
-# #b)
-
-# win_UK_F= olympics_win.query('NOC=="GBR" & Sex=="F"').Year.value_counts().reset_index()
-# win_UK_F.rename(columns={"index":"Year","Year":"F_count"},inplace=True)
-
-# win_UK_M= olympics_win.query('NOC=="GBR" & Sex=="M"').Year.value_counts().reset_index()
-# win_UK_M.rename(columns={"index":"Year","Year":"M_count"},inplace=True)
-
-
-# win_UK_all=win_UK_F.merge(win_UK_M,how='outer', on='Year').sort_values(by='Year')
-
-# win_UK_all.replace(np.nan,0, inplace=True)
-
-# plt.plot(win_UK_all.Year, win_UK_all.F_count, marker='o', markerfacecolor='red', color='red', linewidth=2, label="Female")
-
-# plt.plot(win_UK_all.Year, win_UK_all.M_count, marker='*', markerfacecolor='blue', color='blue', linewidth=2, label="Male")
-
-# plt.title("number of medals (Females, Males) won by the UK team between 1896 and 2016")
-# plt.xlabel('Year'); plt.ylabel('number of medals');
-# plt.legend()
-
-
-# # =============================================================================
-# # Undirected graph
-# # =============================================================================
-
-# # libraries
-# import pandas as pd
-# import numpy as np
-# import networkx as nx
-# import matplotlib.pyplot as plt
- 
-# # Build a dataframe with your connections
-# friends = pd.DataFrame({ 'from':['Adam', 'Borris', 'Chloe','Adam','Ezzy','Fiona','Ezzy','Harry','Harry','Diana','Fiona'],
-#                          'to':['Diana', 'Adam', 'Ezzy','Chloe','Adam','Fiona','Harry','Diana','Borris','Harry','Chloe'],
-#                       })
- 
-# # Build your graph
-# G=nx.from_pandas_edgelist(friends, 'from', 'to')
- 
-# # plot with different layouts
-
-# # Circular
-# nx.draw(G, with_labels=True, node_size=1500, node_color="skyblue", pos=nx.circular_layout(G))
-# plt.title("circular")
- 
-
-# # =============================================================================
-# # directed graph
-# # =============================================================================
- 
-# # Build your graph
-# G=nx.from_pandas_edgelist(friends, 'from', 'to', create_using=nx.DiGraph())
- 
-# # plot with different layouts
-# # spring
-# nx.draw(G, arrows=True,arrowsize=20, with_labels=True, node_size=1500, node_color="skyblue", pos=nx.spring_layout(G))
-# plt.title("spring")
-
-
- 
-# # =============================================================================
-# # weighted graph
-# # =============================================================================
-
-# # Build a dataframe with your connections
-# friends = pd.DataFrame({ 'from':['Adam', 'Borris', 'Chloe','Adam','Ezzy','Fiona','Ezzy','Harry','Harry','Diana','Fiona'],
-#                          'to':['Diana', 'Adam', 'Ezzy','Chloe','Adam','Ezzy','Harry','Diana','Borris','Harry','Chloe'],
-#                          'weight':['5', '3', '6','4','2','7','5','4','8','6','2']})
- 
-# # Build your graph
-# G=nx.from_pandas_edgelist(friends, 'from', 'to', edge_attr=True)
- 
-# # plot with Fruchterman Reingold layouts
-# pos1=nx.fruchterman_reingold_layout(G)
-# nx.draw(G, with_labels=True, node_size=1000, pos=pos1)
-
-# labels = nx.get_edge_attributes(G,'weight')
-# nx.draw_networkx_edge_labels(G, edge_labels=labels, pos=pos1)
-# plt.title("fruchterman_reingold")
-
- 
