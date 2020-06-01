@@ -28,6 +28,7 @@ dataFile= dataFolder / filename
 #sheetname='stringencyindex_legacy'
 stringencyindex_legacy_df = pd.read_excel (dataFile,sheet_name='stringencyindex_legacy')
 confirmedcases_df = pd.read_excel (dataFile,sheet_name='confirmedcases')
+confirmeddeaths_df = pd.read_excel (dataFile,sheet_name='confirmeddeaths')
 #null_rows=data_df[data_df.isnull().any(axis=1)]
 # Fill stringency data with teh last known values 
 stringencyindex_legacy_df=stringencyindex_legacy_df.ffill(axis=1)
@@ -40,7 +41,7 @@ country_list=['China','South Korea','United States','France','United Kingdom','I
 #country_list=['United Kingdom']
 #country_list=['South Korea']
 
-
+fig = plt.figure(figsize=(18,10), dpi=1600)
 for country in country_list:
     stringencyindex_legacy_c_df=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'] == country]
     confirmedcases_c_df=confirmedcases_df[confirmedcases_df['CountryName'] == country]
@@ -62,7 +63,7 @@ for country in country_list:
     plt.xscale("log")
     
     plt.ylim(0, 100)
-    plt.xlim(1, 1000000)
+    plt.xlim(0, 1000000)
 
 
 plt.legend()
@@ -100,8 +101,54 @@ values_of_largest_ten.index=largest_ten_country_list
 column_names=(pd.date_range(start='2020-03-02', periods=10, freq='W-MON')).date
 values_of_largest_ten.columns=column_names
 values_of_largest_ten.index.name="Country Name"
+fig = plt.figure(figsize=(18,10), dpi=1600)
 ax = plt.axes()
 ax.set_title('Average new weekly confirmed cases ')
 sns.heatmap(values_of_largest_ten)
+plt.show()
+#==============================Part 2 - Question 5 =================================
+cc_may1_df=confirmedcases_df[['CountryName','01may2020']]
+cc_may1_us=cc_may1_df[cc_may1_df['CountryName'] == 'United States']['01may2020']
+cc_may1_rest=float(cc_may1_df.sum()) - float(cc_may1_us)
+cc_plt=[cc_may1_us,cc_may1_rest]
 
-#==============================Part 2 - Question 4 =================================
+cd_may1_df=confirmeddeaths_df[['CountryName','01may2020']]
+cd_may1_us=cd_may1_df[cd_may1_df['CountryName'] == 'United States']['01may2020']
+cd_may1_rest=float(cd_may1_df.sum()) - float(cd_may1_us)
+cd_plt=[cd_may1_us,cd_may1_rest]
+pop_us=328000000
+pop_world=7800000000
+
+
+fig = plt.figure(figsize=(18,7), dpi=1200)
+fig.suptitle("US COVID-19 vs Rest of World", fontsize=16)
+ax1 = plt.subplot(131)
+ax2 = plt.subplot(132)
+ax3 = plt.subplot(133)
+
+percentage = [pop_us,pop_world]
+labels= ['United States','Other']
+
+
+ax1 = plt.subplot2grid((1,3),(0,0))
+plt.title('Population')
+explodes = (0.1, 0)
+plt.pie(percentage, explode=explodes, labels=labels, autopct='%1.0f%%',startangle=90,counterclock=False)
+
+ax1 = plt.subplot2grid((1,3),(0,1))
+plt.title('Confirmed Cases')
+explodes = (0.1, 0)
+plt.pie(cc_plt, explode=explodes, labels=labels, autopct='%1.0f%%',startangle=90,counterclock=False)
+
+ax1 = plt.subplot2grid((1,3),(0,2))
+plt.title('Deaths')
+explodes = (0.1, 0)
+plt.pie(cd_plt, explode=explodes, labels=labels, autopct='%1.0f%%',startangle=90,counterclock=False)
+
+plt.show()
+
+
+# to explode the 4th slice
+
+# autopct: control the labels inside the wedges
+#plt.pie(percentage, explode=explodes, labels=labels, autopct='%1.0f%%')
