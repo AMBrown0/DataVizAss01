@@ -34,7 +34,7 @@ stringencyindex_legacy_df=stringencyindex_legacy_df.ffill(axis=1)
 
 
 
-#==============================Part 2 - Question 1 =================================
+#==============================Part 2 - Question 3 =================================
 
 country_list=['China','South Korea','United States','France','United Kingdom','Italy']
 #country_list=['United Kingdom']
@@ -75,17 +75,17 @@ plt.show()
 #tart_date='2020-05-10'
 
 
-
-X=confirmedcases_df.transpose()
+#==============================Part 2 - Question 4 =================================
+#X=confirmedcases_df.transpose()
+cc_df=confirmedcases_df.transpose()
 country_list=confirmedcases_df['CountryName']
+cc_df=cc_df.iloc[2:,]
 
-X=X.iloc[2:,]
-#X=X.diff(axis=1)
-X.index = pd.to_datetime(X.index)
 
-#Calcaulte the increase from the previous day
-X=X.diff(axis=0)
-avg_df=X.loc['2020-03-02':'2020-05-10']
+#Calcaulte the increase from the previous day select date and average per week
+cc_df.index = pd.to_datetime(cc_df.index)
+cc_df=cc_df.diff(axis=0)
+avg_df=cc_df.loc['2020-03-02':'2020-05-10']
 gr = avg_df.groupby(pd.Grouper(level=0,freq='W'))
 gr_mean =pd.DataFrame([ g.mean() for i,g in gr ])
 
@@ -104,3 +104,4 @@ ax = plt.axes()
 ax.set_title('Average new weekly confirmed cases ')
 sns.heatmap(values_of_largest_ten)
 
+#==============================Part 2 - Question 4 =================================
