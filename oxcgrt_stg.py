@@ -13,6 +13,10 @@ import json, urllib.request
 import sys
 from pathlib import Path
 from datetime import datetime
+import matplotlib.dates as mdate
+import plotly.graph_objects as go
+
+
 #%matplotlib inline
 
 # # open a request to read the data
@@ -41,7 +45,7 @@ country_list=['China','South Korea','United States','France','United Kingdom','I
 #country_list=['United Kingdom']
 #country_list=['South Korea']
 
-fig = plt.figure(figsize=(18,10), dpi=1600)
+#fig = plt.figure(figsize=(18,10), dpi=1600)
 for country in country_list:
     stringencyindex_legacy_c_df=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'] == country]
     confirmedcases_c_df=confirmedcases_df[confirmedcases_df['CountryName'] == country]
@@ -120,7 +124,7 @@ pop_us=328000000
 pop_world=7800000000
 
 
-fig = plt.figure(figsize=(18,7), dpi=1200)
+#fig = plt.figure(figsize=(18,7), dpi=1200)
 fig.suptitle("US COVID-19 vs Rest of World", fontsize=16)
 ax1 = plt.subplot(131)
 ax2 = plt.subplot(132)
@@ -152,3 +156,107 @@ plt.show()
 
 # autopct: control the labels inside the wedges
 #plt.pie(percentage, explode=explodes, labels=labels, autopct='%1.0f%%')
+#==============================Part 2 - Question 6 =================================
+c_uk_df=confirmeddeaths_df[confirmeddeaths_df['CountryName'] == 'United Kingdom']
+cc_uk_df=c_uk_df.transpose()
+cc_uk_df=cc_uk_df.iloc[2:,]
+start_date='2020-03-07'
+end_date='2020-05-10'
+#x_axis=(pd.date_range(start=start_date, end=end_date, freq='W-SUN')).date
+
+#Calcaulte the increase from the previous day select date and average per week
+cc_uk_df.index = pd.to_datetime(cc_uk_df.index)
+#cc_uk_df=cc_uk_df.diff(axis=0)
+ax=plt.plot(cc_uk_df)
+#ax.yaxis.set_major_formatter(mticker.ScalarFormatter())
+#ax.get_xaxis().get_major_formatter().set_scientific(False)
+#locator = mdate.YearLocator()
+locator = mdate.DayLocator(interval=14)
+plt.gca().xaxis.set_major_locator(locator)
+plt.gcf().autofmt_xdate()
+plt.yscale('log')
+plt.xticks(rotation=90)
+    
+plt.title('Confirmed deaths UK betweek 7th March and 10th May 2020') 
+plt.xlabel("Date")
+plt.ylabel("Confirmed Deaths")
+#plt.ticklabel_format(style='plain')
+plt.show()
+
+
+#==============================Part 2 - Question 7 =================================
+country_list=['United Kingdom','Spain','Italy','France','United States']
+#country_list=['United Kingdom']
+#country_list=['South Korea']
+
+#fig = plt.figure(figsize=(18,10), dpi=1600)
+#ndc_df=confirmedcases_df[confirmedcases_df['CountryName'] in country_list]
+ndc_df=confirmedcases_df[confirmedcases_df['CountryName'].isin(country_list)]
+ndc_df=ndc_df.transpose()
+ndc_df.columns=ndc_df.loc['CountryName']
+ndc_df=ndc_df.iloc[2:,]
+start_date='2020-03-06'
+end_date='2020-05-10'
+ndc_df.index = pd.to_datetime(ndc_df.index)
+ndc_df=ndc_df.loc[start_date:end_date]
+ndc_df=ndc_df.diff(axis=0)
+ndc_df.dropna(inplace=True)
+
+#ax=plt.plot(ndc_df)
+#plt.xticks(rotation=90)
+
+fig, ax = plt.subplots()
+X=ndc_df.index
+#Y_all = pd.DataFrame([ ndc_df[c] for c in country_list ])
+Y_all=ndc_df.transpose()
+# Y1=list(ndc_df['Spain'])
+# Y2=list(ndc_df['Italy'])
+# Y3=list(ndc_df['United Kingdom'])
+#A=pd.DataFrame([Y1,Y2,Y3])
+#A=list(ndc_df[country_list])
+ax.stackplot(X,Y_all)
+ax.legend(Y_all.index,loc='upper left')
+plt.xticks(rotation=90)
+plt.show()
+
+# ndc_df=confirmedcases_df[confirmedcases_df['CountryName'].isin(country_list)]
+# ndc_df=ndc_df.set_index('CountryName')
+# ndc_df=ndc_df.iloc[:,1:]
+
+# plt.fill_between(X, Y1,
+#                  color="skyblue", alpha=0.4)
+# plt.fill_between(X, Y2,
+#                  color="slateblue", alpha=0.4)
+
+# fig = go.Figure()
+# fig.add_trace(go.Scatter(x=X, y=Y1, fill='tozeroy')) # fill down to xaxis
+# fig.add_trace(go.Scatter(x=X, y=Y2, fill='tonexty')) # fill to trace0 y
+
+# fig.show()
+# plt.show()
+# #for country in country_list:
+#     stringencyindex_legacy_c_df=stringencyindex_legacy_df[stringencyindex_legacy_df['CountryName'] == country]
+#     confirmedcases_c_df=confirmedcases_df[confirmedcases_df['CountryName'] == country]
+#     #country=confirmedcases_df.iloc[:,0].iloc[0]
+#     s_t_df=stringencyindex_legacy_c_df.transpose()
+#     c_t_df=confirmedcases_c_df.transpose()
+#     X=c_t_f_df=c_t_df.iloc[2:,:]
+#     X.set_axis(['confirmedcases'],axis=1,inplace=True)
+#     Y=s_t_df.iloc[2:,:]
+#     Y.set_axis(['stringency'],axis=1,inplace=True)
+#     Y.rename(index={0:"stringency"})
+#     result=pd.concat([X,Y], axis=1)
+#     result.set_index("confirmedcases",inplace=True) 
+#     result.sort_index(inplace=True)
+#     plt.title('Comparison of stringency of COVID-19 repsonse in six countries') 
+#     plt.xlabel("Reported number of cases of COVID-19")
+#     plt.ylabel("Stringency index")
+#     plt.plot(result,label=country)
+#     plt.xscale("log")
+    
+#     plt.ylim(0, 100)
+#     plt.xlim(1, 1000000)
+
+
+# plt.legend()
+# plt.show()
