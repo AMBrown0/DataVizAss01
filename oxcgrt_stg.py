@@ -237,7 +237,7 @@ Y=Y.dropna()
 
 fig = plt.figure()
 ax = plt.gca()
-ax.plot(X,Y, 'o', c='red', alpha=0.4, markeredgecolor='black')
+ax.plot(X,Y, 'o', c='red', alpha=0.4)
 ax.set_xscale('log')
 plt.show()
 
