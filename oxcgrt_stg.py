@@ -15,7 +15,7 @@ from pathlib import Path
 from datetime import datetime
 import matplotlib.dates as mdate
 import plotly.graph_objects as go
-
+import math
 
 #%matplotlib inline
 
@@ -105,7 +105,8 @@ values_of_largest_ten.index=largest_ten_country_list
 column_names=(pd.date_range(start='2020-03-02', periods=10, freq='W-MON')).date
 values_of_largest_ten.columns=column_names
 values_of_largest_ten.index.name="Country Name"
-fig = plt.figure(figsize=(18,10), dpi=1600)
+#fig = plt.figure(figsize=(18,10), dpi=1600)
+fig = plt.figure(figsize=(18,10), dpi=800)
 ax = plt.axes()
 ax.set_title('Average new weekly confirmed cases ')
 sns.heatmap(values_of_largest_ten)
@@ -156,7 +157,7 @@ plt.show()
 
 # autopct: control the labels inside the wedges
 #plt.pie(percentage, explode=explodes, labels=labels, autopct='%1.0f%%')
-#==============================Part 2 - Question 6 =================================
+#==============================Part 3 - Question 6 =================================
 c_uk_df=confirmeddeaths_df[confirmeddeaths_df['CountryName'] == 'United Kingdom']
 cc_uk_df=c_uk_df.transpose()
 cc_uk_df=cc_uk_df.iloc[2:,]
@@ -184,7 +185,7 @@ plt.ylabel("Confirmed Deaths")
 plt.show()
 
 
-#==============================Part 2 - Question 7 =================================
+#==============================Part 3 - Question 7 =================================
 country_list=['United Kingdom','Spain','Italy','France','United States']
 #country_list=['United Kingdom']
 #country_list=['South Korea']
@@ -218,6 +219,63 @@ ax.stackplot(X,Y_all)
 ax.legend(Y_all.index,loc='upper left')
 plt.xticks(rotation=90)
 plt.show()
+
+#==============================Part 3 - Question 8 =================================
+date='04may2020'
+X=confirmedcases_df.set_index('CountryName')
+X=X.iloc[:,1:]
+X=X.transpose()
+X=X.loc[date]
+X=X.dropna()
+
+Y=stringencyindex_legacy_df.set_index('CountryName')
+Y=Y.iloc[:,1:]
+Y=Y.transpose()
+Y=Y.loc[date]
+
+Y=Y.dropna()
+
+fig = plt.figure()
+ax = plt.gca()
+ax.plot(X,Y, 'o', c='red', alpha=0.4, markeredgecolor='black')
+ax.set_xscale('log')
+plt.show()
+
+#==============================Part 3 - Question 9 =================================
+#find all counties with over 1000 cases
+countries_over1k=X[X > 1000].index
+X_over1k=X[countries_over1k]
+Y_over1k=Y[countries_over1k]
+f=3000/X_over1k.max()
+S=f*X_over1k
+#Set bubble areas to represent X value
+SA=np.sqrt(X_over1k/math.pi)
+
+
+fig = plt.figure()
+ax = plt.gca()
+
+#ax.plot(X_over1k,Y_over1k, 'o', c='blue', alpha=0.6, markeredgecolor='black'')
+#ax.scatter(X_over1k,Y_over1k,s=S,alpha=0.6,makeredgecolor='black')
+
+
+ax.scatter(X_over1k,Y_over1k,s=SA,alpha=0.6,c='red')
+
+plt.title("Coutries with >1000 confirmed cases")
+plt.xlabel("Confirmed Cases (Bubble areas=Confirmed cases)")
+plt.ylabel("Stringency")
+ax.set_xscale('log')
+
+plt.show()
+
+
+# fig = plt.figure()
+# ax = plt.gca()
+# #ax.plot(X_over1k,Y_over1k, 'o', c='blue', alpha=0.6, markeredgecolor='black'')
+# #ax.scatter(X_over1k,Y_over1k,s=S,alpha=0.6,makeredgecolor='black')
+# ax.scatter(X_over1k,Y_over1k,s=S,alpha=0.6,c='red')
+# ax.set_xscale('log')
+# plt.show()
 
 # ndc_df=confirmedcases_df[confirmedcases_df['CountryName'].isin(country_list)]
 # ndc_df=ndc_df.set_index('CountryName')
