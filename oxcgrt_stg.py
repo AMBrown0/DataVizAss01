@@ -195,8 +195,8 @@ ndc_df=confirmedcases_df[confirmedcases_df['CountryName'].isin(country_list)]
 ndc_df=ndc_df.transpose()
 ndc_df.columns=ndc_df.loc['CountryName']
 ndc_df=ndc_df.iloc[2:,]
-start_date='2020-03-06'
-end_date='2020-05-10'
+start_date='2020-03-01'
+end_date='2020-05-01'
 ndc_df.index = pd.to_datetime(ndc_df.index)
 ndc_df=ndc_df.loc[start_date:end_date]
 ndc_df=ndc_df.diff(axis=0)
@@ -207,8 +207,8 @@ ndc_df.dropna(inplace=True)
 
 fig, ax = plt.subplots()
 X=ndc_df.index
-#Y_all = pd.DataFrame([ ndc_df[c] for c in country_list ])
-Y_all=ndc_df.transpose()
+Y_all = pd.DataFrame([ ndc_df[c] for c in country_list ])
+#Y_all=ndc_df.transpose()
 # Y1=list(ndc_df['Spain'])
 # Y2=list(ndc_df['Italy'])
 # Y3=list(ndc_df['United Kingdom'])
