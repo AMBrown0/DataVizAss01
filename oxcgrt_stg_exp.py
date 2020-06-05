@@ -163,21 +163,23 @@ plt.show()
 # autopct: control the labels inside the wedges
 #plt.pie(percentage, explode=explodes, labels=labels, autopct='%1.0f%%')
 #==============================Part 3 - Question 6 =================================
-c_uk_df=confirmeddeaths_df[confirmeddeaths_df['CountryName'] == 'United Kingdom']
-cc_uk_df=c_uk_df.transpose()
-cc_uk_df=cc_uk_df.iloc[2:,]
+cd_uk_df=confirmeddeaths_df[confirmeddeaths_df['CountryName'] == 'United Kingdom']
+cd_uk_df=cd_uk_df.transpose()
+cd_uk_df=cd_uk_df.iloc[2:,]
 start_date='2020-03-07'
 end_date='2020-05-10'
+
 #x_axis=(pd.date_range(start=start_date, end=end_date, freq='W-SUN')).date
 
 #Calcaulte the increase from the previous day select date and average per week
-cc_uk_df.index = pd.to_datetime(cc_uk_df.index)
+cd_uk_df.index = pd.to_datetime(cd_uk_df.index)
+cd_uk_df=cd_uk_df.loc[start_date:end_date]
 #cc_uk_df=cc_uk_df.diff(axis=0)
-ax=plt.plot(cc_uk_df)
+ax=plt.plot(cd_uk_df)
 #ax.yaxis.set_major_formatter(mticker.ScalarFormatter())
 #ax.get_xaxis().get_major_formatter().set_scientific(False)
 #locator = mdate.YearLocator()
-locator = mdate.DayLocator(interval=14)
+locator = mdate.DayLocator(interval=7)
 plt.gca().xaxis.set_major_locator(locator)
 plt.gcf().autofmt_xdate()
 plt.yscale('log')
@@ -185,7 +187,7 @@ plt.xticks(rotation=90)
     
 plt.title('Confirmed deaths UK betweek 7th March and 10th May 2020') 
 plt.xlabel("Date")
-plt.ylabel("Confirmed Deaths")
+plt.ylabel("Confirmed Deaths (logerithmic scale)")
 #plt.ticklabel_format(style='plain')
 plt.show()
 
@@ -214,13 +216,9 @@ ndc_df.dropna(inplace=True)
 fig, ax = plt.subplots()
 X=ndc_df.index
 Y_all = pd.DataFrame([ ndc_df[c] for c in country_list ])
-#Y_all=ndc_df.transpose()
-# Y1=list(ndc_df['Spain'])
-# Y2=list(ndc_df['Italy'])
-# Y3=list(ndc_df['United Kingdom'])
-#A=pd.DataFrame([Y1,Y2,Y3])
-#A=list(ndc_df[country_list])
+
 ax.stackplot(X,Y_all)
+plt.title('New daily cases') 
 ax.legend(Y_all.index,loc='upper left')
 plt.xticks(rotation=90)
 plt.show()
@@ -244,6 +242,9 @@ fig = plt.figure()
 ax = plt.gca()
 ax.plot(X,Y, 'o', c='red', alpha=0.4)
 ax.set_xscale('log')
+plt.title("Confirmed cases - all counties - 4th May " )
+plt.xlabel("Confirmed Cases (logerthimic scale)")
+plt.ylabel("Stringency")
 plt.show()
 
 #==============================Part 3 - Question 9 =================================
@@ -266,7 +267,7 @@ ax = plt.gca()
 
 ax.scatter(X_over1k,Y_over1k,s=SA,alpha=0.6,c='red')
 
-plt.title("Coutries with >1000 confirmed cases")
+plt.title("Confirmed cases coutries >1000 4th May" )
 plt.xlabel("Confirmed Cases (Bubble areas=Confirmed cases)")
 plt.ylabel("Stringency")
 ax.set_xscale('log')
